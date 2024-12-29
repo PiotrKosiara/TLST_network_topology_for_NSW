@@ -1,33 +1,6 @@
 import networkx as nx
 import requests
 import random
-import openrouteservice
-from geopy.distance import geodesic
-
-
-def oblicz_dystans_prosty(miejsce_start, miejsce_cel):
-    api_key = ""
-    client = openrouteservice.Client(key=api_key)
-    # Geokodowanie lokalizacji
-    start_coords = client.pelias_search(miejsce_start)['features'][0]['geometry']['coordinates']
-    cel_coords = client.pelias_search(miejsce_cel)['features'][0]['geometry']['coordinates']
-    # Zamiana kolejności na (lat, lon)
-    start_coords = (start_coords[1], start_coords[0])
-    cel_coords = (cel_coords[1], cel_coords[0])
-    # Obliczanie dystansu w linii prostej
-    dystans = geodesic(start_coords, cel_coords).kilometers
-    return dystans
-
-def znajdz_wspolrzedne(miejsce):
-    api_key = ""
-    client = openrouteservice.Client(key=api_key)
-    wynik = client.pelias_search(miejsce)['features'][0]['geometry']['coordinates']
-    wspolrzedne = {
-        'latitude': wynik[1],
-        'longitude': wynik[0]
-    }
-    return wspolrzedne
-
 
 # Stałe i parametry
 BANDWIDTH_PER_PERSON_MBPS = 0.2
