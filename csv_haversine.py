@@ -3,19 +3,11 @@ from math import radians, sin, cos, sqrt, asin
 
 
 def haversine(lat1, lon1, lat2, lon2):
-    R = 6371  # Promień Ziemi w kilometrach
-
+    R = 6371
     # Konwersja stopni na radiany
     lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-
-    # Różnice współrzędnych
     dlat = lat2 - lat1
     dlon = lon2 - lon1
-
-    # Średnia szerokość geograficzna
-    phi_m = (lat1 + lat2) / 2
-
-    # Obliczenie zgodne z podanym wzorem
     a = (1 - cos(dlat)) / 2 + cos(lat1) * cos(lat2) * (1 - cos(dlon)) / 2
     c = asin(sqrt(a))
     wyn = 2 * R * c
@@ -44,7 +36,7 @@ with open(output_file, "w", newline="") as csvfile:
 
     for i, place1 in enumerate(data):
         for j, place2 in enumerate(data):
-            if i < j:  # Aby uniknąć powielania par
+            if i < j:
                 distance = haversine(
                     place1["latitude"], place1["longitude"],
                     place2["latitude"], place2["longitude"]
