@@ -30,7 +30,7 @@ with open(input_file, "r") as csvfile:
 
 with open(output_file, "w", newline="") as csvfile:
     fieldnames = ["Place 1", "Place 2", "Distance (km)"]
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=';')
 
     writer.writeheader()
 
