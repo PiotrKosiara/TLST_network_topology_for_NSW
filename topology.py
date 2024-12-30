@@ -55,7 +55,6 @@ def create_network_topology():
 
     return G
 
-# Wizualizacja topologii (opcjonalnie)
 def visualize_topology(G):
     import matplotlib.pyplot as plt
     pos = nx.spring_layout(G)
