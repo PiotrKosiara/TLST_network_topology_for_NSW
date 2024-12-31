@@ -4,45 +4,45 @@ Armidale Regional Council;-30.51268;151.663934
 Ballina Shire;-28.854769;153.532296
 Balranald Shire;-33.826317;143.688366
 Bathurst Region;-33.29156;149.552885
-Bayside Council;-37.943292;145.01871
+Bayside Council;-33.94252827958635;151.1664662692706
 Bega Valley Shire;-36.674491;149.724431
 Bellingen Shire;-30.450513;152.900296
 Berrigan Shire;-35.752088;145.778969
-Blacktown City Council;-35.280901;149.129269
+Blacktown City Council;-33.73868605048984;150.85644066096873
 Bland Shire;-33.98333;147.68333
 Blayney Shire;-33.532091;149.249356
 Blue Mountains, City of;-33.685687;150.407402
 Bogan Shire;-31.582985;146.916957
 Bourke Shire;-30.090701;145.944501
 Brewarrina Shire;-29.861972;146.97619
-Broken Hill, City of;-33.421964;116.211173
-Burwood Council;-37.850028;145.107804
+Broken Hill, City of;-31.963425122472145;141.46548408549342
+Burwood Council;-33.8830157129782;151.1025845705637
 Byron Shire;-28.587926;153.484803
 Cabonne Shire;-33.148471;148.762339
 Camden Council;-34.061276;150.695776
-Campbelltown, City of;-34.882243;138.659807
+Campbelltown, City of;-34.066565227477184;150.81151442882745
 Canada Bay, City of;-33.865655;151.115473
-Canterbury-Bankstown, City of;-35.280901;149.129269
+Canterbury-Bankstown, City of;-33.92455698485862;151.02996643323826
 Carrathool Shire;-34.41667;145.43333
 Central Coast Council;-33.427354;151.342636
 Central Darling Shire;-31.758762;143.485558
 Cessnock, City of;-32.83164;151.351392
 Clarence Valley Council;-29.717009;152.760303
 Cobar Shire;-31.497282;145.834345
-Coffs Harbour, City of;-35.280901;149.129269
+Coffs Harbour, City of;-30.300685652548793;153.11831574935684
 Coolamon Shire;-34.677704;147.110101
 Coonamble Shire;-30.95573;148.388199
 Cootamundra-Gundagai Regional Council;-34.638458;148.027763
 Cowra Shire;-33.832784;148.679979
-Cumberland City Council;36.380826;-87.639098
+Cumberland City Council;-33.84217866940874;150.99095093936413
 Dubbo Regional Council;-32.249554;148.609715
 Dungog Shire;-32.40507;151.749226
-Edward River Council;-23.992438;134.050443
+Edward River Council;-35.17491175432657;144.8193624083883
 Eurobodalla Shire;-35.965175;149.921059
-Fairfield, City of;38.273076;-122.041473
-Federation Council;-23.992438;134.050443
+Fairfield, City of;-33.87159829400772;150.95364228620798
+Federation Council;-35.648887258429255;146.3038266328974
 Forbes Shire;-33.376142;148.005911
-Georges River Council;-23.992438;134.050443
+Georges River Council;-33.97215066329338;151.08704223030617
 Gilgandra Shire;-31.632304;148.690904
 Glen Innes Severn Council;-29.714291;151.903241
 Goulburn Mulwaree Council;-34.898259;149.784089
@@ -53,10 +53,10 @@ Gwydir Shire;-29.469875;150.485315
 Hawkesbury, City of;-33.286009;150.773246
 Hay Shire;-34.509522;144.843538
 Hills Shire, The;-33.76224;151.00613
-Hilltops Council;-23.992438;134.050443
+Hilltops Council;-34.31244716745033;148.3320205589906
 Hornsby Shire;-33.700687;151.092308
-Hunter's Hill, Municipality of;38.938905;-84.38601
-Inner West Council;-23.992438;134.050443
+Hunter's Hill, Municipality of;-33.83406877514866;151.14445969786868
+Inner West Council;-33.894779130034166;151.1529168035633
 Inverell Shire;-29.773192;151.114599
 Junee Shire;-34.865516;147.580012
 Kempsey Shire;-30.945352;152.502236
@@ -64,21 +64,21 @@ Kiama, Municipality of;-34.671698;150.849093
 Ku-ring-gai Council;-33.732939;151.145138
 Kyogle Council;-28.631585;153.00687
 Lachlan Shire;-32.775521;147.070289
-Lake Macquarie, City of;26.61955;-80.05919
+Lake Macquarie, City of;-33.06150454654255;151.57758104991254
 Lane Cove, Municipality of;-33.815863;151.16721
 Leeton Shire;-34.554226;146.402108
 Lismore, City of;-28.810195;153.289347
-Lithgow, City of;-35.280901;149.129269
-Liverpool, City of;-35.280901;149.129269
+Lithgow, City of;-33.483611866942695;150.14582515471227
+Liverpool, City of;-33.922827724246055;150.91286629539786
 Liverpool Plains Shire;-31.605759;150.525984
 Lockhart Shire;-35.225331;146.717425
 Lord Howe Island;-31.560589;159.085907
-Maitland, City of;-35.280901;149.129269
-Mid-Coast Council;-23.992438;134.050443
+Maitland, City of;-32.738266985709934;151.5521094649704
+Mid-Coast Council;-32.00448634522796;151.97025377991866
 Mid-Western Regional;-32.606559;149.731245
 Moree Plains Shire;-29.19221;149.646019
 Mosman Council;-33.829705;151.24157
-Murray River Council;-23.992438;134.050443
+Murray River Council;-35.367705166347974;144.16808238687867
 Murrumbidgee Council;-34.65662;145.567712
 Muswellbrook Shire;-32.27371;150.896582
 Nambucca Shire;-30.700253;152.799671
@@ -86,10 +86,10 @@ Narrandera Shire;-34.694654;146.680349
 Narrabri Shire;-30.33528;149.774409
 Narromine Shire;-32.236294;148.243593
 Newcastle, City of;-32.9278;151.782607
-Northern Beaches Council;-8.96843;148.130564
+Northern Beaches Council;-33.69560431202279;151.2892919108874
 North Sydney Council;-33.836767;151.2077
 Oberon Shire;-33.703874;149.860889
-Orange, City of;40.780723;-74.233062
+Orange, City of;-33.27425170107089;149.08343963490756
 Parkes Shire;-33.139833;148.179809
 Parramatta Council, City of;-33.814115;151.005457
 Penrith, City of;-33.746679;150.699109
@@ -111,7 +111,7 @@ Tamworth Regional Council;-30.889343;150.907218
 Temora Shire;-34.443978;147.531076
 Tenterfield Shire;-29.048896;152.016228
 Tweed Shire;-28.181508;153.529624
-Unincorporated Far West;-23.992438;134.050443
+Unincorporated Far West;-30.624799651838906;141.96072354295168
 Upper Hunter Shire;-31.897927;151.101188
 Upper Lachlan Shire;-34.358541;149.406476
 Uralla Shire;-30.641801;151.495186

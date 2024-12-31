@@ -6,7 +6,8 @@ from shapely.geometry import Point
 import contextily as ctx
 
 BANDWIDTH_PER_PERSON_MBPS = 0.2
-DISTANCE_THRESHOLD = 1500  # Próg dystansu w km
+DISTANCE_THRESHOLD = 125  # Próg dystansu w km
+MAX_CONNECTIONS = 10  # Maksymalna liczba połączeń na węzeł
 
 # Wczytywanie danych (z separatorem ;)
 population_df = pd.read_csv('NSW_population.csv', sep=';')
@@ -41,6 +42,31 @@ def create_network_topology():
             latency = distance / 200  # Przykładowa latencja
             G.add_edge(place1, place2, latency=latency, capacity=capacity)
 
+    # Dodawanie połączeń minimalnych (każdy punkt do 2 najbliższych)
+    for node in G.nodes:
+        neighbors = distances_df[(distances_df['Place 1'] == node) | (distances_df['Place 2'] == node)] \
+            .sort_values(by='Distance (km)')
+        connections = 0
+        for _, row in neighbors.iterrows():
+            if connections >= 2:
+                break
+            place1, place2 = row['Place 1'], row['Place 2']
+            distance = row['Distance (km)']
+
+            if place1 in G.nodes and place2 in G.nodes and not G.has_edge(place1, place2):
+                capacity = (G.nodes[place1]['bandwidth'] + G.nodes[place2]['bandwidth']) / 2
+                latency = distance / 200
+                G.add_edge(place1, place2, latency=latency, capacity=capacity)
+                connections += 1
+
+    # Ograniczenie do maksymalnie 10 połączeń na węzeł
+    for node in G.nodes:
+        edges = [(node, neighbor, G[node][neighbor]['latency']) for neighbor in G.neighbors(node)]
+        if len(edges) > MAX_CONNECTIONS:
+            edges = sorted(edges, key=lambda x: x[2])  # Sortuj po latencji (dystansie)
+            for _, neighbor, _ in edges[MAX_CONNECTIONS:]:
+                G.remove_edge(node, neighbor)
+
     # Dodawanie access pointów
     for index, row in access_points_df.iterrows():
         access_point = row['access_point']
@@ -54,35 +80,27 @@ def create_network_topology():
     return G
 
 
-# Klasa do wizualizacji
+# Wizualizacja topologii
 def visualize_topology(G):
-    node_pos_list = [{'Location': node, 'geometry': Point(lon, lat)} for node, (lon, lat) in
-                     nx.get_node_attributes(G, 'pos').items()]
+    pos = nx.get_node_attributes(G, 'pos')
+    node_pos_list = [{'Location': node, 'geometry': Point(lon, lat)} for node, (lon, lat) in pos.items()]
     nodes_gdf = gpd.GeoDataFrame(node_pos_list, crs='EPSG:4326')
     nodes_gdf = nodes_gdf.to_crs(epsg=3857)
-
     node_pos_mercator = nodes_gdf.set_index('Location')['geometry'].apply(lambda p: (p.x, p.y)).to_dict()
 
-    fig, ax = plt.subplots(figsize=(12, 10))
-
-    # Rysowanie węzłów
+    fig, ax = plt.subplots(figsize=(10, 8))
     nodes_gdf.plot(ax=ax, marker='o', color='skyblue', markersize=100)
-
-    # Rysowanie krawędzi
     nx.draw_networkx_edges(G, node_pos_mercator, ax=ax, edge_color='gray', width=2)
 
-    # Rysowanie etykiet na krawędziach
-    edge_labels = nx.get_edge_attributes(G, 'capacity')
-    for (u, v), label in edge_labels.items():
-        x = (node_pos_mercator[u][0] + node_pos_mercator[v][0]) / 2
-        y = (node_pos_mercator[u][1] + node_pos_mercator[v][1]) / 2
-        ax.text(x, y, f"{label:.1f} Mbps", fontsize=9, ha='center', va='center',
-                bbox=dict(facecolor='white', alpha=0.7))
+    # edge_labels = nx.get_edge_attributes(G, 'capacity')
+    # for (u, v), label in edge_labels.items():
+    #     x = (node_pos_mercator[u][0] + node_pos_mercator[v][0]) / 2
+    #     y = (node_pos_mercator[u][1] + node_pos_mercator[v][1]) / 2
+    #     plt.text(x, y, f"{label:.1f} Mbps", fontsize=9, ha='center', va='center',
+    #              bbox=dict(facecolor='white', alpha=0.7))
 
-    # Dodanie mapy bazowej
     ctx.add_basemap(ax, source=ctx.providers.CartoDB.Voyager)
-
-    plt.title("Network Topology of NSW")
+    plt.title('Network Topology of NSW')
     plt.axis('off')
     plt.show()
 
