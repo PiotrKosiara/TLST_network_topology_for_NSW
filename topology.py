@@ -1,67 +1,91 @@
 import networkx as nx
-import requests
-import random
+import pandas as pd
+import matplotlib.pyplot as plt
+import geopandas as gpd
+from shapely.geometry import Point
+import contextily as ctx
 
-# Stałe i parametry
 BANDWIDTH_PER_PERSON_MBPS = 0.2
-TOTAL_POPULATION = 8153000  # Całkowita populacja NSW
-TARGET_BANDWIDTH_TBPS = (TOTAL_POPULATION * BANDWIDTH_PER_PERSON_MBPS) / 1000  # Przepustowość w Tbps
+DISTANCE_THRESHOLD = 1500  # Próg dystansu w km
 
-# Symulowane dane populacji dla głównych miast
-CITY_POPULATION = {
-    'Sydney': 5000000,
-    'Newcastle': 322000,
-    'Wollongong': 305000,
-    'Central Coast': 333000,
-    'Dubbo': 55000,
-    'Tamworth': 42000,
-    'Coffs Harbour': 75000,
-}
+# Wczytywanie danych (z separatorem ;)
+population_df = pd.read_csv('NSW_population.csv', sep=';')
+coordinates_df = pd.read_csv('NSW_coordinates.csv', sep=';')
+distances_df = pd.read_csv('distances.csv', sep=';')
+access_points_df = pd.read_csv('access_points.csv', sep=';')
 
-# Węzły dostępu międzynarodowego i międzystanowego
-ACCESS_POINTS = [
-    ('Sydney', 'International Cable 1'),
-    ('Sydney', 'International Cable 2'),
-    ('Newcastle', 'Queensland Link'),
-    ('Wollongong', 'Victoria Link')
-]
 
-# Funkcja symulująca pobieranie danych populacji (można zastąpić API)
-def get_population_data():
-    return CITY_POPULATION
-
-# Funkcja tworząca graf topologii sieciowej
+# Tworzenie grafu
 def create_network_topology():
     G = nx.Graph()
-    population_data = get_population_data()
 
-    # Dodawanie węzłów do grafu
-    for city, population in population_data.items():
+    # Dodawanie węzłów (Local Government Areas - LGA)
+    for index, row in population_df.iterrows():
+        lga = row['Local Government areas']
+        population = row['Population']
         bandwidth = population * BANDWIDTH_PER_PERSON_MBPS
-        G.add_node(city, population=population, bandwidth=bandwidth)
 
-    # Dodawanie połączeń (krawędzi) między miastami
-    for city1 in CITY_POPULATION:
-        for city2 in CITY_POPULATION:
-            if city1 != city2:
-                distance = random.randint(50, 300)  # Symulacja odległości
-                latency = distance / 200  # Przykładowa latencja w ms
-                capacity = (CITY_POPULATION[city1] + CITY_POPULATION[city2]) * BANDWIDTH_PER_PERSON_MBPS / 2
-                G.add_edge(city1, city2, latency=latency, capacity=capacity)
+        coord = coordinates_df[coordinates_df['Local Government areas'] == lga]
+        if not coord.empty:
+            lat, lon = coord.iloc[0]['latitude'], coord.iloc[0]['longitude']
+            G.add_node(lga, population=population, bandwidth=bandwidth, pos=(lon, lat))
 
-    # Dodawanie połączeń do punktów dostępu
-    for city, access_point in ACCESS_POINTS:
-        G.add_edge(city, access_point, capacity=5000, latency=1)  # Duża przepustowość dla kabli międzynarodowych
+    # Dodawanie krawędzi na podstawie dystansów (z progiem dystansu)
+    for index, row in distances_df.iterrows():
+        place1 = row['Place 1']
+        place2 = row['Place 2']
+        distance = row['Distance (km)']
+
+        if place1 in G.nodes and place2 in G.nodes and distance <= DISTANCE_THRESHOLD:
+            capacity = (G.nodes[place1]['bandwidth'] + G.nodes[place2]['bandwidth']) / 2
+            latency = distance / 200  # Przykładowa latencja
+            G.add_edge(place1, place2, latency=latency, capacity=capacity)
+
+    # Dodawanie access pointów
+    for index, row in access_points_df.iterrows():
+        access_point = row['access_point']
+        location_lga = row['location_lga']
+        capacity = row['capacity'] * 1000  # Z Tbps na Mbps
+
+        if location_lga in G.nodes:
+            G.add_node(access_point, pos=(G.nodes[location_lga]['pos']))
+            G.add_edge(location_lga, access_point, capacity=capacity, latency=1)
 
     return G
 
+
+# Klasa do wizualizacji
 def visualize_topology(G):
-    import matplotlib.pyplot as plt
-    pos = nx.spring_layout(G)
-    nx.draw(G, pos, with_labels=True, node_size=700, node_color='skyblue')
-    labels = nx.get_edge_attributes(G, 'capacity')
-    nx.draw_networkx_edge_labels(G, pos, edge_labels=labels)
+    node_pos_list = [{'Location': node, 'geometry': Point(lon, lat)} for node, (lon, lat) in
+                     nx.get_node_attributes(G, 'pos').items()]
+    nodes_gdf = gpd.GeoDataFrame(node_pos_list, crs='EPSG:4326')
+    nodes_gdf = nodes_gdf.to_crs(epsg=3857)
+
+    node_pos_mercator = nodes_gdf.set_index('Location')['geometry'].apply(lambda p: (p.x, p.y)).to_dict()
+
+    fig, ax = plt.subplots(figsize=(12, 10))
+
+    # Rysowanie węzłów
+    nodes_gdf.plot(ax=ax, marker='o', color='skyblue', markersize=100)
+
+    # Rysowanie krawędzi
+    nx.draw_networkx_edges(G, node_pos_mercator, ax=ax, edge_color='gray', width=2)
+
+    # Rysowanie etykiet na krawędziach
+    edge_labels = nx.get_edge_attributes(G, 'capacity')
+    for (u, v), label in edge_labels.items():
+        x = (node_pos_mercator[u][0] + node_pos_mercator[v][0]) / 2
+        y = (node_pos_mercator[u][1] + node_pos_mercator[v][1]) / 2
+        ax.text(x, y, f"{label:.1f} Mbps", fontsize=9, ha='center', va='center',
+                bbox=dict(facecolor='white', alpha=0.7))
+
+    # Dodanie mapy bazowej
+    ctx.add_basemap(ax, source=ctx.providers.CartoDB.Voyager)
+
+    plt.title("Network Topology of NSW")
+    plt.axis('off')
     plt.show()
+
 
 if __name__ == '__main__':
     topology = create_network_topology()
