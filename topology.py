@@ -25,7 +25,7 @@ def create_network_topology():
     for index, row in population_df.iterrows():
         lga = row['Local Government areas']
         population = row['Population']
-        bandwidth = population * BANDWIDTH_PER_PERSON_MBPS
+        bandwidth = population * BANDWIDTH_PER_PERSON_MBPS * 1000
 
         coord = coordinates_df[coordinates_df['Local Government areas'] == lga]
         if not coord.empty:
@@ -81,7 +81,7 @@ def create_network_topology():
     for index, row in access_points_df.iterrows():
         access_point = row['access_point']
         location_lga = row['location_lga']
-        capacity = row['capacity'] * 1000  # Z Tbps na Mbps
+        capacity = row['capacity'] * 1000000  # Z Tbps na Mbps
 
         if location_lga in G.nodes:
             G.add_node(access_point, pos=(G.nodes[location_lga]['pos']))
